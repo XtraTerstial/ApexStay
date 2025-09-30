@@ -1,4 +1,9 @@
 package com.xtraCoder.devbrat.ApexStay.repositories;
 
-public class HotelRepository {
+import com.xtraCoder.devbrat.ApexStay.entity.Hotel;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface HotelRepository extends JpaRepository<Hotel, Long> {
 }
