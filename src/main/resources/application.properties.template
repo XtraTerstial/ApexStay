@@ -1,0 +1,11 @@
+spring.application.name=ApexStay
+
+#DB Configuration
+spring.datasource.url=jdbc:postgresql://localhost:5432/apexStay
+spring.datasource.username=YOUR_DB_USERNAME
+spring.datasource.password=YOUR_DB_PASSWORD
+
+# JPA / Hibernate Configuration
+spring.jpa.hibernate.ddl-auto=create
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
