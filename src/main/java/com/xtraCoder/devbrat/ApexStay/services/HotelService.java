@@ -8,4 +8,10 @@ public interface HotelService {
     HotelDto createNewHotel(HotelDto hotelDto);
 
     HotelDto getHotelById(Long id);
+
+    HotelDto updateHotelById(Long hotelId, HotelDto hotelDto);
+
+    Boolean deleteHotelById(Long hotelId);
+
+    void activateHotel(Long hotelId);
 }
