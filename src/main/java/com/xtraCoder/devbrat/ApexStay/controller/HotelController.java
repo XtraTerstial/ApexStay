@@ -47,5 +47,12 @@ public class HotelController {
         log.info("Deleting hotel with id: {}", hotelId);
         Boolean isDeleted = hotelService.deleteHotelById(hotelId);
         return ResponseEntity.noContent().build();
-        }
+    }
+
+    @PatchMapping("/{hotelId}")
+    public ResponseEntity<Void> activateHotel(@PathVariable Long hotelId) {
+        log.info("Activating hotel with id: {}", hotelId);
+        hotelService.activateHotel(hotelId);
+        return ResponseEntity.noContent().build();
+    }
 }
