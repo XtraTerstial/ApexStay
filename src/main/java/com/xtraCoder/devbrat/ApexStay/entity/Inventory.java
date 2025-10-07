@@ -1,7 +1,10 @@
 package com.xtraCoder.devbrat.ApexStay.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -16,6 +19,9 @@ import java.time.LocalDateTime;
         columnNames = {"hotel_id", "room_id", "date"}
         // Ensure unique combination of hotel, room, and date because a room type can have multiple rooms
 ))
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Inventory {
 
     @Id
