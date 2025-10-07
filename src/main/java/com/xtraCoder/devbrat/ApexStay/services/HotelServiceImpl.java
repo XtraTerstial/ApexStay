@@ -2,12 +2,14 @@ package com.xtraCoder.devbrat.ApexStay.services;
 
 import com.xtraCoder.devbrat.ApexStay.dto.HotelDto;
 import com.xtraCoder.devbrat.ApexStay.entity.Hotel;
+import com.xtraCoder.devbrat.ApexStay.entity.Room;
 import com.xtraCoder.devbrat.ApexStay.exception.ResourceNotFoundException;
 import com.xtraCoder.devbrat.ApexStay.repositories.HotelRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 public class HotelServiceImpl implements HotelService {
 
     private final HotelRepository hotelRepository;
+    private final InventoryService inventoryService;
     private final ModelMapper modelMapper;
 
     @Override
@@ -48,22 +51,32 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
-    public Boolean deleteHotelById(Long id) {
-        boolean exists = hotelRepository.existsById(id);
-        if (!exists) throw new ResourceNotFoundException("Hotel not found with id: " + id);
+    @Transactional
+    public void deleteHotelById(Long id) {
+        Hotel hotel = hotelRepository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with ID: "+id));
 
         hotelRepository.deleteById(id);
-        //TODO: delete the future inventories and bookings of this hotel
-        return true;
+        for(Room room: hotel.getRooms()) {
+            inventoryService.deleteFutureInventories(room);
+        }
     }
 
     @Override
+    @Transactional
     public void activateHotel(Long id) {
         log.info("Activating hotel with id: {}", id);
         Hotel hotel = hotelRepository
                 .findById(id)
                 .orElseThrow(()-> new ResourceNotFoundException("Hotel not found with id: " + id));
         hotel.setActive(true);
-        //TODO: Create inventory for all the rooms for this hotel
+
+        //assuming only do it ones
+        // Below code initializes inventory for all rooms in the hotel for a year when the hotel is activated
+        // This ensures that the inventory is only created when the hotel is active, and avoids unnecessary inventory creation for inactive hotels
+        for (Room room: hotel.getRooms()) {
+            inventoryService.initializeRoomForAYear(room);
+        }
     }
 }

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +22,7 @@ public class RoomServiceImpl implements RoomService {
 
     public final RoomRepository roomRepository;
     private final HotelRepository hotelRepository;
+    private final InventoryService inventoryService;
     public final ModelMapper modelMapper;
 
     //First we check if the hotel exists then we create a new room and associate it with the hotel
@@ -35,6 +37,11 @@ public class RoomServiceImpl implements RoomService {
         Room room = modelMapper.map(roomDto, Room.class);
         room.setHotel(hotel);
         room = roomRepository.save(room);
+
+        // If the hotel is active, initialize inventory for the room for a year
+        if (hotel.getActive()){
+            inventoryService.initializeRoomForAYear(room);
+        }
         return modelMapper.map(room, RoomDto.class);
     }
 
@@ -64,15 +71,15 @@ public class RoomServiceImpl implements RoomService {
     }
 
     //This API is to delete room by room id
+    @Transactional
     @Override
     public void deleteRoomById(Long roomId) {
-        log.info("Deleting room with ID: {}", roomId);
-        boolean exists = roomRepository.existsById(roomId);
-        if (!exists) {
-            throw new ResourceNotFoundException("Room not found with id: " + roomId);
-        }
+        log.info("Deleting the room with ID: {}", roomId);
+        Room room = roomRepository
+                .findById(roomId)
+                .orElseThrow(() -> new ResourceNotFoundException("Room not found with ID: "+roomId));
+        inventoryService.deleteFutureInventories(room);
         roomRepository.deleteById(roomId);
 
-        //TODO: delete the future inventories and bookings of this room
     }
 }

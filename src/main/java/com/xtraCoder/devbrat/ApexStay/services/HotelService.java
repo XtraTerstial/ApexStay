@@ -1,7 +1,6 @@
 package com.xtraCoder.devbrat.ApexStay.services;
 
 import com.xtraCoder.devbrat.ApexStay.dto.HotelDto;
-import com.xtraCoder.devbrat.ApexStay.entity.Hotel;
 
 public interface HotelService {
 
@@ -11,7 +10,7 @@ public interface HotelService {
 
     HotelDto updateHotelById(Long hotelId, HotelDto hotelDto);
 
-    Boolean deleteHotelById(Long hotelId);
+    void deleteHotelById(Long hotelId);
 
     void activateHotel(Long hotelId);
 }
