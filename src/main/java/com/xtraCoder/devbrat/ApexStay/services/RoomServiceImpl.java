@@ -25,8 +25,8 @@ public class RoomServiceImpl implements RoomService {
 
     //First we check if the hotel exists then we create a new room and associate it with the hotel
     @Override
-    public RoomService createNewRoom(Long hotelId, RoomDto roomDto) {
-        log.info("Creating new room: {}", roomDto);
+    public RoomDto createNewRoom(Long hotelId, RoomDto roomDto) {
+        log.info("Creating new room in hotel with ID: {}", roomDto);
         // Check if the hotel exists
         Hotel hotel = hotelRepository
                 .findById(hotelId)
@@ -35,7 +35,7 @@ public class RoomServiceImpl implements RoomService {
         Room room = modelMapper.map(roomDto, Room.class);
         room.setHotel(hotel);
         room = roomRepository.save(room);
-        return modelMapper.map(room, RoomService.class);
+        return modelMapper.map(room, RoomDto.class);
     }
 
     //First we check if the hotel exists then we fetch all rooms associated with the hotel

@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface RoomService {
     // Define room-related service methods here
-    RoomService createNewRoom(Long hotelId, RoomDto roomDto);
+    RoomDto createNewRoom(Long hotelId, RoomDto roomDto);
 
     List<RoomDto> getAllRoomsInHotel(Long hotelId);
 
